@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Name</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:         #000000;
+      --text:       #f0ede8;
+      --text-dim:   rgba(240, 237, 232, 0.50);
+      --accent:     #22d3ee;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ── GRAPH ──────────────────────────────────────────── */
+    #graph {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ── CONTENT ────────────────────────────────────────── */
+    #content {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      padding: 0 7vw;
+      pointer-events: none;
+    }
+
+    .card {
+      max-width: 460px;
+      pointer-events: auto;
+      background: rgba(9, 9, 11, 0.58);
+      backdrop-filter: blur(14px) saturate(1.3);
+      -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      padding: 2.6rem 3rem;
+      animation: rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: 0.5s;
+      opacity: 0;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* name */
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 0.18em;
+    }
+
+    /* tagline */
+    .tagline {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.70rem;
+      font-weight: 300;
+      letter-spacing: 0.09em;
+      color: var(--accent);
+      text-transform: lowercase;
+      margin-bottom: 1.8rem;
+      opacity: 0.80;
+    }
+
+    /* bio */
+    .bio {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.82;
+      color: var(--text-dim);
+      margin-bottom: 2.2rem;
+    }
+
+    /* links */
+    .links {
+      display: flex;
+      gap: 1.8rem;
+    }
+
+    .links a {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      text-transform: lowercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      position: relative;
+      transition: color 0.22s ease;
+    }
+
+    .links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.22s ease;
+    }
+
+    .links a:hover { color: var(--accent); }
+    .links a:hover::after { width: 100%; }
+
+    .bio a {
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: var(--text-dim);
+      text-decoration: none;
+      position: relative;
+      transition: color 0.22s ease;
+    }
+
+    .bio a::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.22s ease;
+    }
+
+    .bio a:hover { color: var(--text); }
+    .bio a:hover::after { width: 100%; }
+
+    /* ── GRAPH CONTROLS ─────────────────────────────── */
+    #controls {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 10;
+      max-width: 240px;
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .controls-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.78;
+      color: var(--text-dim);
+    }
+
+    #controls-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    #ietInfo {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.56rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      opacity: 0.6;
+      line-height: 1.7;
+    }
+
+    .slider-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.10em;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    #nSlider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 80px;
+      height: 2px;
+      background: rgba(240,237,232,0.15);
+      border-radius: 1px;
+      outline: none;
+    }
+    #nSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+    #nSlider::-moz-range-thumb {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+
+    #regen {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid rgba(240,237,232,0.12);
+      border-radius: 2px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    #regen:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div id="graph"></div>
+
+<div id="content">
+  <div class="card">
+
+    <!-- ═══════════════════════════════════════════
+         EDIT YOUR CONTENT HERE
+    ═══════════════════════════════════════════ -->
+
+    <h1>Max Horwitz</h1>
+    <p class="tagline">ECE and math &nbsp;·&nbsp; university of washington &nbsp;·&nbsp; ml &nbsp;·&nbsp; game theory &nbsp;·&nbsp; optimization</p>
+
+    <p class="bio">
+      I work on machine learning, game theory, and optimization. I used to 
+      work on combinatorics, and before that on small engineering teams. 
+      Broadly, I am interested in using mathematics to design provably efficient/safe
+      decision making algorithms. 
+
+      <br> <br>
+
+      I feel incredibly lucky to be advised by Prof. <a href="https://faculty.washington.edu/ratliffl/about/"> Lillian Ratliff </a>
+       and <a href="https://jakeagonzales.github.io/"> Jake Gonzales </a>. I am extremely grateful to <a href="https://sites.math.washington.edu/~fclement/"> Francois Clement </a>
+       for entroducing me to research, and I can't wait to work with Prof. <a href="https://yashaswinimurthy.web.illinois.edu/"> Yashaswini Murthy </a> and 
+        Prof. <a href="https://adamwierman.com/"> Adam Wierman </a> this summer. 
+    </p>
+
+    <div class="links">
+      <!-- Replace # with your actual URLs -->
+      <a href="https://arxiv.org/search/?searchtype=author&query=max+horwitz" target="_blank" rel="noopener">arxiv</a>
+      <a href="/cv.pdf"                                                     target="_blank" rel="noopener">cv</a>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+  </div>
+</div>
+
+<div id="controls">
+  <p class="controls-desc">
+    This graph is a result of my work in combinatorics.
+    Play with the slider below if you are curious.
+  </p>
+  <div id="controls-row">
+    <span class="slider-label">n = <span id="nVal">5</span></span>
+    <input type="range" id="nSlider" min="4" max="6" step="1" value="5">
+    <button id="regen">regenerate</button>
+  </div>
+  <div id="ietInfo"></div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/3d-force-graph"></script>
+<script type="module">
+
+import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+// ════════════════════════════════════════════════════════════════════
+//  IET GRAPH GENERATION
+//  Orbit of an interval exchange transformation.
+//  Nodes = orbit points; inorder edges trace the dynamical orbit,
+//  sorted edges connect value-adjacent orbit points.
+// ════════════════════════════════════════════════════════════════════
+
+function sampleLengths(n) {
+  const NOISE   = 0.05;
+  const MIN_IV  = 0.04;
+  const base    = [0.6, 0.2];
+  const small   = (1 - 0.8) / (n - 2);
+  for (let i = 2; i < n; i++) base.push(small);
+  let lengths = base.map(b => Math.max(MIN_IV, b + (Math.random() * 2 - 1) * NOISE));
+  for (let i = n - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [lengths[i], lengths[j]] = [lengths[j], lengths[i]];
+  }
+  const s = lengths.reduce((a, b) => a + b, 0);
+  return lengths.map(l => l / s);
+}
+
+// A permutation is irreducible iff no proper prefix maps onto itself:
+// for all k in 1..n-1, {p[0],...,p[k-1]} ≠ {0,...,k-1}.
+// Equivalent fast check: NOT all p[i] < k for i < k.
+// No proper prefix maps to itself (reducibility check)
+function isIrreducible(p) {
+  const n = p.length;
+  for (let k = 1; k < n; k++)
+    if (p.slice(0, k).every(v => v < k)) return false;
+  return true;
+}
+
+// No interval stays in the same relative position
+function hasNoFixedPoints(p) {
+  return !p.some((v, i) => v === i);
+}
+
+function randomPermutation(n) {
+  let p;
+  do {
+    p = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = (Math.random() * (i + 1)) | 0;
+      [p[i], p[j]] = [p[j], p[i]];
+    }
+  } while (!isIrreducible(p) || !hasNoFixedPoints(p));
+  return p;
+}
+
+function buildIET(n) {
+  const lengths = sampleLengths(n);
+  const perm    = randomPermutation(n);
+  const alpha   = [0];
+  for (let i = 0; i < n - 1; i++) alpha.push(alpha[i] + lengths[i]);
+  const ranAlpha = perm.map((pi) => {
+    let s = 0;
+    for (let j = 0; j < n; j++) if (perm[j] < pi) s += lengths[j];
+    return s;
+  });
+  function apply(x) {
+    let iv = n - 1;
+    for (let i = 0; i < n - 1; i++) if (x < alpha[i + 1]) { iv = i; break; }
+    return ranAlpha[iv] + (x - alpha[iv]);
+  }
+  return { apply, lengths, perm };
+}
+
+function buildGraph(n, N = 600) {
+  const { apply, lengths, perm } = buildIET(n);
+  document.getElementById('ietInfo').innerHTML =
+    'π = [' + perm.map(p => p + 1).join(', ') + ']<br>' +
+    'λ = [' + lengths.map(l => l.toFixed(3)).join(', ') + ']';
+  const seq   = new Array(N);
+  seq[0] = Math.random();
+  for (let i = 1; i < N; i++) seq[i] = apply(seq[i - 1]);
+
+  const nodes = seq.map((_, i) => ({ id: String(i) }));
+  const links = [];
+
+  for (let i = 1; i < N; i++)
+    links.push({ source: String(i - 1), target: String(i) });
+  links.push({ source: '0', target: String(N - 1) });
+
+  const sorted = seq.map((x, i) => ({ x, i })).sort((a, b) => a.x - b.x);
+  for (let i = 1; i < sorted.length; i++)
+    links.push({ source: String(sorted[i - 1].i), target: String(sorted[i].i) });
+  links.push({ source: String(sorted[0].i), target: String(sorted[N - 1].i) });
+
+  return { nodes, links };
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  SCENE
+// ════════════════════════════════════════════════════════════════════
+const ACCENT = '#22d3ee';
+
+const Graph = ForceGraph3D()
+  (document.getElementById('graph'))
+  .backgroundColor('#000000')
+  .nodeColor(() => ACCENT)
+  .nodeRelSize(5)
+  .linkColor(() => ACCENT)
+  .linkWidth(2.5)
+  .linkOpacity(0.6)
+  .numDimensions(3)
+  .d3AlphaDecay(0.005)
+  .d3VelocityDecay(0.2);
+
+Graph.d3Force('charge').strength(-300);
+Graph.d3Force('link').distance(40);
+
+// ── Bloom ────────────────────────────────────────────────────────
+const bloomPass = new UnrealBloomPass();
+bloomPass.strength  = 2.5;
+bloomPass.radius    = 0.8;
+bloomPass.threshold = 0.15;
+Graph.postProcessingComposer().addPass(bloomPass);
+
+// ── Controls ─────────────────────────────────────────────────────
+const nSlider = document.getElementById('nSlider');
+const nVal    = document.getElementById('nVal');
+const regen   = document.getElementById('regen');
+
+function update() {
+  Graph.graphData(buildGraph(parseInt(nSlider.value)));
+}
+
+nSlider.addEventListener('input', () => { nVal.textContent = nSlider.value; update(); });
+regen.addEventListener('click', update);
+
+update();
+
+Graph.controls().autoRotate      = true;
+Graph.controls().autoRotateSpeed = 0.4;
+
+</script>
+</body>
+</html>
